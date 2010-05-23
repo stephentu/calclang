@@ -1,0 +1,115 @@
+PARSER_BEGIN(CalcLangParser)
+package com.calclang.parser;
+public class CalcLangParser { }
+PARSER_END(CalcLangParser)
+    
+SKIP :
+{
+  " "
+| "\t"
+}
+
+TOKEN :
+{
+  < INTEGER_LITERAL: ["1"-"9"] (["0"-"9"])* >
+}
+
+TOKEN : 
+{
+  < VAR: "var" >
+|
+  < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
+|
+  < #LETTER: ["_","a"-"z","A"-"Z"] >
+|
+  < #DIGIT: ["0"-"9"] >
+}
+
+Node Prog() : {}
+{
+    (Stmt() | "\n")* <EOF>
+    { return jjtThis; }
+}
+
+void Stmt() #void : {}
+{
+    ( SubExpr() | AssignmentExpr() ) ( ";" | "\n" ) 
+}
+
+void AssignmentExpr() #AssignmentExpr(2) : {}
+{
+    "var" Ident() "=" SubExpr()
+}
+
+void SubExpr() #void : {}
+{
+    AddExpr() ( LOOKAHEAD(1) "-" AddExpr() #SubExpr(2) )*
+}
+
+void AddExpr() #void : {}
+{
+    DivExpr() ( LOOKAHEAD(1) "+" DivExpr() #AddExpr(2) )*
+}
+
+void DivExpr() #void : {}
+{
+    MultExpr() ( "/" MultExpr() #DivExpr(2) )*
+}
+
+void MultExpr() #void : {}
+{
+    Term() ( "*" Term() #MultExpr(2) )*
+}
+
+void Term() #void : {}
+{
+    "+" Term() #PlusNode(1) 
+    | 
+    "-" Term() #MinusNode(1)
+    | 
+    Power()
+}
+
+void Power() #void : {}
+{
+    Atom() ( "^" Term() #Power(2) )?
+}
+
+void Atom() #void : {}
+{
+    Ident() | IntLiteral() | "(" SubExpr() ")" | MatrixExpr()
+}
+
+void Ident() : 
+{ 
+    Token t; 
+}
+{
+    t = <IDENTIFIER> 
+    { jjtThis.symbol = t.image; }
+}
+
+void IntLiteral() :
+{
+    Token t;
+}
+{
+    t = <INTEGER_LITERAL>
+    { jjtThis.intValue = Integer.parseInt(t.image); }
+}
+
+
+void MatrixExpr(): {}
+{
+    "[" ( MatrixRowEntry() )? "]"
+}
+
+void MatrixRowEntry(): {}
+{
+    MatrixColumnEntry() ( ";" MatrixColumnEntry() )*
+}
+
+void MatrixColumnEntry(): {}
+{
+    SubExpr() ( "," SubExpr() )*
+}
