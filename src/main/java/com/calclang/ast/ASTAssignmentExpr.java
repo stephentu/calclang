@@ -1,9 +1,11 @@
 package com.calclang.ast;
 
 import com.calclang.interpreter.VirtualMachine;
+import com.calclang.namer.SymbolTable;
 import com.calclang.parser.CalcLangParser;
 
 public class ASTAssignmentExpr extends com.calclang.ast.AbstractNode {
+	
 	public ASTAssignmentExpr(int id) {
 		super(id);
 	}
@@ -16,8 +18,8 @@ public class ASTAssignmentExpr extends com.calclang.ast.AbstractNode {
 		return false;
 	}
 	
-	public Node getIdent() {
-		return jjtGetChild(0);
+	public ASTIdent getIdent() {
+		return (ASTIdent) jjtGetChild(0);
 	}
 	
 	public Node getTarget() {
@@ -25,9 +27,15 @@ public class ASTAssignmentExpr extends com.calclang.ast.AbstractNode {
 	}
 	
 	@Override
+	public void bindNames(SymbolTable symTab) {
+		getTarget().bindNames(symTab);
+		getIdent().makeName(symTab);
+	}
+	
+	@Override
 	public void interpret(VirtualMachine vm) {
 		getTarget().interpret(vm);
-		vm.assign(getIdent().getSymbol(), vm.pop());
+		vm.assign(vm.getRegisterFor(getIdent().getDeclaration()), vm.pop());
 	}
 
 }

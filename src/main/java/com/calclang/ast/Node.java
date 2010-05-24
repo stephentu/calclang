@@ -1,6 +1,9 @@
 package com.calclang.ast;
 
+import com.calclang.codegen.ByteCodeGenerator;
 import com.calclang.interpreter.VirtualMachine;
+import com.calclang.namer.Declaration;
+import com.calclang.namer.SymbolTable;
 
 public interface Node {
         
@@ -25,10 +28,14 @@ public interface Node {
 
     public boolean hasLValue();
     
+    public void bindNames(SymbolTable symTab);
+    
     public void interpret(VirtualMachine vm);
 
-    public void codeGen(VirtualMachine vm);
+    public void codeGen(ByteCodeGenerator gen);
 
     public String getSymbol();
+    
+    public Declaration getDeclaration();
     
 }

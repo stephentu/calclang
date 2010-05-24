@@ -1,5 +1,6 @@
 package com.calclang.ast;
 
+import com.calclang.codegen.ByteCodeGenerator;
 import com.calclang.interpreter.VirtualMachine;
 import com.calclang.parser.CalcLangParser;
 import com.calclang.runtime.CalcObject;
@@ -36,5 +37,14 @@ public abstract class BinopNode extends AbstractNode {
 	}
 	
 	protected abstract void doBinopAction(VirtualMachine vm, CalcObject left, CalcObject right);
+	
+	@Override
+	public void codeGen(ByteCodeGenerator gen) {
+		getLeft().codeGen(gen);
+		getRight().codeGen(gen);
+		doCodeGenAction(gen);
+	}
+	
+	protected abstract void doCodeGenAction(ByteCodeGenerator gen);
 	
 }

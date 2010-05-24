@@ -18,6 +18,8 @@ TOKEN :
 {
   < VAR: "var" >
 |
+  < PRINT: "print" >
+|
   < IDENTIFIER: <LETTER> (<LETTER>|<DIGIT>)* >
 |
   < #LETTER: ["_","a"-"z","A"-"Z"] >
@@ -33,7 +35,12 @@ Node Prog() : {}
 
 void Stmt() #void : {}
 {
-    ( SubExpr() | AssignmentExpr() ) ( ";" | "\n" ) 
+    ( SubExpr() | AssignmentExpr() | PrintExpr() ) ( ";" | "\n" ) 
+}
+
+void PrintExpr() : {}
+{
+    <PRINT> SubExpr() ( "," SubExpr() )*
 }
 
 void AssignmentExpr() #AssignmentExpr(2) : {}

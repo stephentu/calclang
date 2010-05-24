@@ -1,5 +1,6 @@
 package com.calclang.ast;
 
+import com.calclang.codegen.ByteCodeGenerator;
 import com.calclang.interpreter.VirtualMachine;
 import com.calclang.parser.CalcLangParser;
 import com.calclang.runtime.CalcObject;
@@ -17,6 +18,11 @@ public class ASTAddExpr extends BinopNode {
 	@Override
 	protected void doBinopAction(VirtualMachine vm, CalcObject left, CalcObject right) {
 		vm.push(left.add(right));
+	}
+
+	@Override
+	protected void doCodeGenAction(ByteCodeGenerator gen) {
+		gen.add();
 	}
 
 }

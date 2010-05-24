@@ -1,5 +1,6 @@
 package com.calclang.ast;
 
+import com.calclang.codegen.ByteCodeGenerator;
 import com.calclang.interpreter.VirtualMachine;
 import com.calclang.parser.CalcLangParser;
 import com.calclang.runtime.IntObject;
@@ -21,6 +22,11 @@ public class ASTIntLiteral extends AbstractNode {
 		vm.push(new IntObject(intValue));
 	}
 
+	@Override
+	public void codeGen(ByteCodeGenerator gen) {
+		gen.pushInt(intValue);
+	}
+	
 	public boolean hasLValue() {
 		return true;
 	}
